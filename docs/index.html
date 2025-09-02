@@ -7,10 +7,15 @@
     <title>Мое резюме</title>
     <base href="/resume/" />
     <link rel="stylesheet" href="css/app.css" />
-    <link href="ResumeBlazorApp.styles.css" rel="stylesheet" />
 </head>
 <body>
     <div id="app">Загрузка...</div>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        Blazor.start({
+            loadBootResource: function (type, name, defaultUri, integrity) {
+                return `./${name}`;
+            }});
+    </script>
 </body>
 </html>
