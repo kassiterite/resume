@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Resume.Models
+@inject PdfService PdfService
 
 <PageTitle>Резюме</PageTitle>
 
@@ -15,6 +16,7 @@
         <div class="contact-info">
             <p>📧 @Person?.Email</p>
             <p>📍 @Person?.Location</p>
+            <p><button @onclick="GeneratePdf" class="pdf-button">📄 Скачать PDF</button></p>
         </div>
     </header>
 
@@ -60,6 +62,11 @@
 
 @code {
     private Person? Person { get; set; }
+
+    private async Task GeneratePdf()
+    {
+        await PdfService.GeneratePdfAsync();
+    }
 
     protected override void OnInitialized()
     {
