@@ -20,10 +20,6 @@
     </header>
     <div class="main-content">
         <section class="section">
-            <h3>Поделиться резюме</h3>
-            <button @onclick="GeneratePdf" class="pdf-button">📄 Скачать PDF</button>
-        </section>
-        <section class="section">
             <h3>Обо мне</h3>
             <p>@Person?.Summary</p>
         </section>
@@ -61,6 +57,8 @@
         </section>
         </div>
 </div>
+
+<button @onclick="GeneratePdf" class="pdf-button">📄 Скачать PDF</button>
 
 @code {
     private Person? Person { get; set; }
