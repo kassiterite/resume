@@ -1,0 +1,243 @@
+:root {
+    --primary: #5E1914;
+    --secondary: #E67E22;
+    --accent: #D35400;
+    --light: #FDEBD0;
+    --dark: #2C0E0A;
+    --text: #2C2C2C;
+    --background: #FEF5E7;
+    --gray: #F9F5F0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: var(--background);
+    color: var(--text);
+    padding: 10px;
+}
+
+.resume-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: linear-gradient(135deg, var(--primary), var(--dark));
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+}
+
+.contact-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 1.1rem;
+}
+
+.section {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+    .section h3 {
+        color: var(--primary);
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--secondary);
+    }
+
+.skills-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.skill-item {
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+    animation-delay: calc(0.15*var(--animation-delay));
+}
+
+.skill-name {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.skill-bar {
+    height: 10px;
+    background: var(--light);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+.skill-level {
+    height: 100%;
+    background: var(--secondary);
+    border-radius: 5px;
+    width: 0;
+    animation: fillBar 1.5s ease-out forwards;
+    animation-delay: calc((0.1s*var(--animation-delay)) + 0.3s);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fillBar {
+    to {
+        width: var(--level);
+    }
+}
+
+.experience-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.experience-item {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    border-left: 4px solid var(--secondary);
+}
+
+.experience-period {
+    background: var(--secondary);
+    color: white;
+    padding: 10px 15px;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.experience-details {
+    padding: 15px;
+}
+
+    .experience-details h4 {
+        color: var(--primary);
+        margin-bottom: 5px;
+        font-size: 1.2rem;
+    }
+
+    .experience-details h5 {
+        color: var(--dark);
+        margin-bottom: 10px;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
+@media (max-width: 992px) {
+    .resume-container {
+        padding: 15px;
+    }
+
+    .header {
+        padding: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .contact-info {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: center;
+    }
+
+    .skills-container {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        padding: 1.5rem;
+    }
+
+    .experience-period {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+
+    .experience-details {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .resume-container {
+        padding: 10px;
+    }
+
+    .header {
+        padding: 1.2rem;
+    }
+
+    .section {
+        padding: 1.2rem;
+    }
+
+    .profile-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .experience-item {
+        border-left: 3px solid var(--secondary);
+    }
+
+    .experience-details h4 {
+        font-size: 1.15rem;
+    }
+
+    .experience-details h5 {
+        font-size: 1rem;
+    }
+}
