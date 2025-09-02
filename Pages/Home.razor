@@ -58,10 +58,21 @@
         </div>
 </div>
 
-<button @onclick="GeneratePdf" class="pdf-button">📄 Скачать PDF</button>
-
+<button @onclick="GeneratePdf" class="pdf-button">📄 Скачать PDF1</button>
+<button @onclick="GeneratePdfSimple" class="pdf-button">📄 Скачать PDF2</button>
+<button @onclick="TestClick" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Тестовая кнопка</button>
 @code {
     private Person? Person { get; set; }
+
+    private void TestClick()
+    {
+        Console.WriteLine("Кнопка работает!");
+    }
+
+    private async Task GeneratePdfSimple()
+    {
+        await JSRuntime.InvokeVoidAsync("generatePdf", "resume-container", "resume.pdf");
+    }
 
     private async Task GeneratePdf()
     {
