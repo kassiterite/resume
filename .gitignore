@@ -1,0 +1,17 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/.ionide/
+**/.idea/
+**/.history/
+*.user
+*.suo
+*.cache
+*.log
+*.swp
+.DS_Store
+.env
+.vs/
+appsettings.*.json
+/publish/
