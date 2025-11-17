@@ -1,21 +1,21 @@
-/* Оптимизация для многостраничного PDF */
+/* Оптимизация для многостраничной печати */
+.resume-container {
+    page-break-inside: avoid;
+}
+
 .section {
-    break-inside: avoid;
-    margin-bottom: 20px;
+    page-break-inside: avoid;
+    page-break-after: auto;
 }
 
-.experience-item {
-    break-inside: avoid;
-    margin-bottom: 15px;
+/* Заголовки не должны оставаться внизу страницы */
+h1, h2, h3, h4 {
+    page-break-after: avoid;
 }
 
-.header {
-    break-inside: avoid;
-}
-
-/* Минимальная высота для секций */
-.section:not(:last-child) {
-    min-height: 50px;
+/* Избегаем разрыва внутри важных блоков */
+.profile-section, .experience-item, .skill-item {
+    page-break-inside: avoid;
 }
 
 .language-switcher {
