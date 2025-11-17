@@ -13,63 +13,85 @@
         loadingElement.style.zIndex = '1000';
         loadingElement.textContent = 'Генерация PDF...';
         const resumeContainer = document.getElementById(elementId);
-        if (!resumeContainer) throw new Error("Контейнер не найден");
+        if (!resumeContainer) throw new Error("Контейнер резюме не найден");
 
         const jsPDF = window.jspdf.jsPDF;
+        const pdf = new jsPDF('p', 'mm', 'a4');
 
-        // Создаем массив для хранения промисов
-        const sectionPromises = [];
-        const sections = [];
+        const margin = 15;
+        const contentWidth = 180;
+        const pageHeight = 297;
+        const usablePageHeight = pageHeight - (margin * 2);
 
-        // Собираем все основные блоки
+        // Собираем все контейнеры
+        const containers = [];
+
         const header = resumeContainer.querySelector('.header');
-        const sectionElements = resumeContainer.querySelectorAll('.section');
+        if (header) containers.push({ element: header, name: 'Шапка' });
 
-        if (header) sections.push(header);
-        sectionElements.forEach(section => sections.push(section));
+        const sections = resumeContainer.querySelectorAll('.section');
+        sections.forEach((section, index) => {
+            containers.push({
+                element: section,
+                name: `Секция ${index + 1}`
+            });
+        });
 
-        // Рендерим все секции параллельно
-        for (let section of sections) {
-            const promise = html2canvas(section, {
+        let currentY = margin;
+        let currentPage = 1;
+        let pageBreaks = 0;
+
+        console.log(`📊 Начало генерации PDF. Контейнеров: ${containers.length}`);
+
+        for (let i = 0; i < containers.length; i++) {
+            const container = containers[i];
+
+            // Рендерим контейнер
+            const canvas = await html2canvas(container.element, {
                 scale: 1.5,
                 useCORS: true,
                 backgroundColor: '#ffffff'
-            }).then(canvas => {
-                return {
-                    canvas: canvas,
-                    height: (canvas.height * 180) / canvas.width // 180mm ширина контента
-                };
             });
-            sectionPromises.push(promise);
-        }
 
-        // Ждем завершения всех рендеров
-        const renderedSections = await Promise.all(sectionPromises);
+            const containerHeight = (canvas.height * contentWidth) / canvas.width;
+            const availableSpace = usablePageHeight - (currentY - margin);
 
-        // Создаем PDF
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const margin = 15;
-        const pageHeight = 267;
-        let currentY = margin;
-        let pageNumber = 1;
+            console.log(`\n--- ${container.name} ---`);
+            console.log(`Высота: ${containerHeight.toFixed(1)}mm`);
+            console.log(`Текущая позиция Y: ${currentY.toFixed(1)}mm`);
+            console.log(`Доступное место: ${availableSpace.toFixed(1)}mm`);
 
-        for (let i = 0; i < renderedSections.length; i++) {
-            const { canvas, height } = renderedSections[i];
+            // ПРОВЕРКА ВЛЕЗАНИЯ
+            if (containerHeight > availableSpace) {
+                console.log(`🔄 ${container.name} НЕ ВЛЕЗАЕТ! Требуется перенос.`);
 
-            // Проверяем, нужна ли новая страница
-            if (currentY + height > pageHeight) {
+                // Создаем новую страницу
                 pdf.addPage();
-                pageNumber++;
+                currentPage++;
+                pageBreaks++;
                 currentY = margin;
+
+                console.log(`✅ Создана страница ${currentPage}`);
+            } else {
+                console.log(`✅ ${container.name} влезает на текущую страницу`);
             }
 
+            // Добавляем контейнер
             const imgData = canvas.toDataURL('image/png', 0.9);
-            pdf.addImage(imgData, 'PNG', margin, currentY, 180, height);
-            currentY += height + 10;
+            pdf.addImage(imgData, 'PNG', margin, currentY, contentWidth, containerHeight);
+
+            currentY += containerHeight + 10; // Отступ между контейнерами
+
+            console.log(`📝 ${container.name} добавлен на страницу ${currentPage}`);
+            console.log(`Новая позиция Y: ${currentY.toFixed(1)}mm`);
         }
 
+        console.log(`\n🎉 Генерация завершена!`);
+        console.log(`📄 Всего страниц: ${currentPage}`);
+        console.log(`🔄 Переносов: ${pageBreaks}`);
+
         pdf.save(fileName);
-        console.log(`PDF создан! Страниц: ${pageNumber}`);
+
 
 
     } catch (error) {
