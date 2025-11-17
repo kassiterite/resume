@@ -1,3 +1,23 @@
+/* Оптимизация для многостраничного PDF */
+.section {
+    break-inside: avoid;
+    margin-bottom: 20px;
+}
+
+.experience-item {
+    break-inside: avoid;
+    margin-bottom: 15px;
+}
+
+.header {
+    break-inside: avoid;
+}
+
+/* Минимальная высота для секций */
+.section:not(:last-child) {
+    min-height: 50px;
+}
+
 .language-switcher {
     position: fixed;
     top: 20px;
