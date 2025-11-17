@@ -12,50 +12,65 @@
         loadingElement.style.borderRadius = '10px';
         loadingElement.style.zIndex = '1000';
         loadingElement.textContent = 'Генерация PDF...';
-        document.body.appendChild(loadingElement);
+        const resumeContainer = document.getElementById(elementId);
+        if (!resumeContainer) throw new Error("Контейнер не найден");
 
-        const element = document.getElementById(elementId);
+        const jsPDF = window.jspdf.jsPDF;
 
-        if (!element) {
-            alert('Элемент для печати не найден!');
-            return;
+        // Создаем массив для хранения промисов
+        const sectionPromises = [];
+        const sections = [];
+
+        // Собираем все основные блоки
+        const header = resumeContainer.querySelector('.header');
+        const sectionElements = resumeContainer.querySelectorAll('.section');
+
+        if (header) sections.push(header);
+        sectionElements.forEach(section => sections.push(section));
+
+        // Рендерим все секции параллельно
+        for (let section of sections) {
+            const promise = html2canvas(section, {
+                scale: 1.5,
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                return {
+                    canvas: canvas,
+                    height: (canvas.height * 180) / canvas.width // 180mm ширина контента
+                };
+            });
+            sectionPromises.push(promise);
         }
 
-        // Используем html2canvas и jsPDF
-        const { jsPDF } = window.jspdf;
+        // Ждем завершения всех рендеров
+        const renderedSections = await Promise.all(sectionPromises);
 
-        const canvas = await html2canvas(element, {
-            scale: 2, // Высокое качество
-            useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
-        });
-
-        const imgData = canvas.toDataURL('image/png');
+        // Создаем PDF
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const margin = 15;
+        const pageHeight = 267;
+        let currentY = margin;
+        let pageNumber = 1;
 
-        let heightLeft = imgHeight;
-        let position = 0;
+        for (let i = 0; i < renderedSections.length; i++) {
+            const { canvas, height } = renderedSections[i];
 
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+            // Проверяем, нужна ли новая страница
+            if (currentY + height > pageHeight) {
+                pdf.addPage();
+                pageNumber++;
+                currentY = margin;
+            }
 
-        // Добавляем новые страницы если контент не помещается
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+            const imgData = canvas.toDataURL('image/png', 0.9);
+            pdf.addImage(imgData, 'PNG', margin, currentY, 180, height);
+            currentY += height + 10;
         }
 
-        // Сохраняем PDF
         pdf.save(fileName);
+        console.log(`PDF создан! Страниц: ${pageNumber}`);
 
-        // Убираем loading
-        document.body.removeChild(loadingElement);
 
     } catch (error) {
         console.error('Ошибка генерации PDF:', error);
