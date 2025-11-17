@@ -1,59 +1,37 @@
-<!-- <script>navigator.serviceWorker.register('service-worker.js');</script> -->
+<script>
+// Функции для работы с cookies
+window.blazorSetCookie = function(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+};
+
+window.blazorGetCookie = function(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+};
+
+window.blazorDeleteCookie = function(name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+};
+</script>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="icon" type="image/png" href="/resume/images/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/resume/images/favicon.svg" />
-    <link rel="shortcut icon" href="/resume/images/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/resume/images/apple-touch-icon.png" />
-    <link rel="manifest" href="/resume/images/site.webmanifest" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Мое резюме</title>
     <base href="/resume/" />
-    <link href="/resume/css/app.css" rel="stylesheet" />
-    <script src="/resume/js/pdfGenerator.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!--<script>
-window.generatePdf = async (elementId, fileName) => {
-    try {
-        const element = document.getElementById(elementId);
-        const { jsPDF } = window.jspdf;
-        
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-        
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        pdf.save(fileName);
-        
-    } catch (error) {
-        console.error('PDF error:', error);
-        alert('Ошибка: ' + error.message);
-    }
-};
-</script>-->
+    <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
     <div id="app">Загрузка...</div>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
